@@ -148,8 +148,8 @@ sub main {
 
       ## Drop application user so that nobody can connect. Disabling per-session binlog beforehand
       $orig_master_handler->disable_log_bin_local();
-      print current_time_us() . " Drpping app user on the orig master..\n";
-      FIXME_xxx_drop_app_user($orig_master_handler);
+      print current_time_us() . " Dropping app user on the orig master..\n";
+      #FIXME_xxx_drop_app_user($orig_master_handler);
 
       ## Waiting for N * 100 milliseconds so that current connections can exit
       my $time_until_read_only = 15;
