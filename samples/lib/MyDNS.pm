@@ -12,10 +12,10 @@ use Socket;
 use Parallel::ForkManager;
 use Log::Minimal env_debug => 'MYDNS_DEBUG';
 
-use DeNA::Conf::Common;
-use DeNA::Conf::DNSRR2;
-use DeNA::Utils;
-use Admin::Host;
+#use DeNA::Conf::Common;
+#use DeNA::Conf::DNSRR2;
+#use DeNA::Utils;
+#use Admin::Host;
 
 
 sub new {
