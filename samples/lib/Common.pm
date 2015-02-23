@@ -7,6 +7,8 @@ use Readonly;
 
 use MyDNS;
 
+Readonly my $MYDNS => MyDNS->new();
+
 sub master_takeover_mydns {
   my $command   = shift;
   my $orig_host = shift;
