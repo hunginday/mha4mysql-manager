@@ -17,7 +17,7 @@ sub new {
     my $class = shift;
     my %args = @_ == 1 ? %{ $_[0] } : @_;
 
-    $args{conf} = 'DeNA/Conf/DNSRR2.pm' unless $args{conf};
+    $args{conf} = 'ConfigMyDNS.pm' unless $args{conf};
     eval { require $args{conf}; };
     $@ and croak "couldn't require $args{conf} ($@)";
     if ($args{conf} !~ m{^/} and exists $INC{ $args{conf} }) {
@@ -35,16 +35,10 @@ sub get_db_handle {
     my $self = shift;
     my %args = @_ == 1 ? %{ $_[0] } : @_;
 
-    $args{region} or croak "not found region args";
     $args{mode} //= 'W';
 
-    if (defined $self->{dbh}->{ $args{region} }
-            and $self->{dbh}->{ $args{region} }->ping) {
-        return $self->{dbh}->{ $args{region} };
-    }
-
     my $timeout = $args{timeout} || 10;
-    my $conf    = $DeNA::Conf::DNSRR2::CONF{regions}->{ $args{region} };
+    my $conf    = $ConfigMyDNS::CONF;
 
     my $dsn = sprintf("DBI:mysql:database=%s;host=%s;mysql_connect_timeout=%d;mysql_read_default_file=/etc/my.cnf;mysql_read_default_group=mysql;mysql_skip_secure_auth=1",
                       $conf->{db_name},
