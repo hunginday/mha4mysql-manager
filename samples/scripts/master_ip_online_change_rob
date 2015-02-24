@@ -28,6 +28,9 @@ use MHA::NodeUtil;
 use Time::HiRes qw( sleep gettimeofday tv_interval );
 use Data::Dumper;
 
+use lib "/root/git/mha4mysql-manager/samples/lib";
+use Common;
+
 my $_tstart;
 my $_running_interval = 0.1;
 my (
@@ -248,6 +251,9 @@ sub main {
       $new_master_handler->disconnect();
 
       ## Update master ip on the catalog database, etc
+      print current_time_us() . " Starting updating MyDNS..\n";
+      Common::master_takeover_mydns($Command, $Orig_Master_Host, $Orig_Master_Ip, $New_Master_Host, $New_Master_Ip);
+      print current_time_us() . " Starting disabling backup cron..\n";
       $exit_code = 0;
     };
     if ($@) {
