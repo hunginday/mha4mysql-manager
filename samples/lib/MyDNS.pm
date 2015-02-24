@@ -77,7 +77,7 @@ sub disconnect_all {
             $dbh->disconnect;
         };
         if ($@) {
-            warn "failed to close DBH for $region: $@";
+            warn "failed to close DBH: $@";
         }
     }
 }
