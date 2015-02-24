@@ -35,8 +35,6 @@ sub get_db_handle {
     my $self = shift;
     my %args = @_ == 1 ? %{ $_[0] } : @_;
 
-    $args{mode} //= 'W';
-
     my $timeout = $args{timeout} || 10;
     my $conf    = $ConfigMyDNS::CONF;
 
@@ -46,13 +44,12 @@ sub get_db_handle {
                       $timeout,
                      );
     debugf("dsn: %s", $dsn);
-    my %credential = $args{mode} eq 'R'
-        ? %DeNA::Conf::DB_MYDNS_R : %DeNA::Conf::DB_MYDNS_W;
-    my $autocommit = $args{mode} eq 'R' ? 1 : 0;
+
+    my $autocommit = 1;
 
     my $dbh = DBI->connect($dsn,
-                           $credential{user},
-                           $credential{password},
+                           $conf->{db_user},
+                           $conf->{db_pwd},
                            {
                                AutoCommit           => $autocommit,
                                PrintError           => 0,
@@ -64,7 +61,7 @@ sub get_db_handle {
     if ($dbh->{AutoCommit} != $autocommit) {
         croak "can't set AutoCommit=$autocommit : " . $DBI::errstr;
     }
-    return $self->{dbh}->{ $args{region} } = $dbh;
+    return $self->{dbh} = $dbh;
 }
 
 
