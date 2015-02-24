@@ -64,22 +64,20 @@ sub get_db_handle {
     return $self->{dbh} = $dbh;
 }
 
-
 sub disconnect_all {
     my $self = shift;
 
     ### close all DB connection
-    while (my($region, $dbh) = each %{ $self->{dbh} }) {
-        if ($dbh && $dbh->ping()) {
-            eval {
-                if (!$dbh->{AutoCommit}) {
-                    $dbh->rollback;
-                }
-                $dbh->disconnect;
-            };
-            if ($@) {
-                warn "failed to close DBH for $region: $@";
+    my $dbh = $self->{dbh};
+    if ($dbh && $dbh->ping()) {
+        eval {
+            if (!$dbh->{AutoCommit}) {
+                $dbh->rollback;
             }
+            $dbh->disconnect;
+        };
+        if ($@) {
+            warn "failed to close DBH for $region: $@";
         }
     }
 }
