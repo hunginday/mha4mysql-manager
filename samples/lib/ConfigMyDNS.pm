@@ -10,7 +10,7 @@ our %CONF = (
     db_host   => 'infra-hanoi-test04',
     db_name   => 'mydns',
     db_user   => 'mydns',
-    db_pwd    => '@mydns',
+    db_pwd    => 'mydns',
 );
 
 1;
