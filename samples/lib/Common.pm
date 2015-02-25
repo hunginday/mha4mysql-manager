@@ -42,6 +42,24 @@ sub master_takeover_mydns {
   }
 }
 
+sub _check_result {
+  my $dbh           = shift;
+  my $affected_rows = shift;
+
+  if (not defined($affected_rows)) {
+    print "Unexpected error happened from MyDNS.\n";
+    $dbh->rollback();
+    die;
+  }
+  elsif ($affected_rows == 0) {
+    # no error
+    print "No rows matched on MyDNS.\n";
+  }
+  else {
+    print "$affected_rows row(s) were affected.\n";
+  }
+}
+
 sub _delete_entry_iphost {
   my $dbh  = shift;
   my $ip   = shift;
