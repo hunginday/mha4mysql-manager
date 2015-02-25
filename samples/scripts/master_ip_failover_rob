@@ -56,6 +56,7 @@ sub main {
     eval {
 
       # updating global catalog, etc
+      print "FIXME: stop: need to code here\n";
       $exit_code = 0;
     };
     if ($@) {
@@ -91,6 +92,7 @@ sub main {
 
       ## Update master ip on the catalog database, etc
       #FIXME_xxx;
+      print "FIXME: start: need to code here\n";
 
       $exit_code = 0;
     };
