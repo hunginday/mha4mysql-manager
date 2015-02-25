@@ -98,7 +98,6 @@ sub _master_takeover {
   my $new_master_ip    = shift;
   my $new_master_host  = shift;
 
-  print "_master_takeover..\n";
   print "Deleting existing new master's MyDNS entries $new_master_host($new_master_ip)..\n";
   _delete_entry_iphost($dbh, $new_master_ip, $new_master_host);
   print "Updating MyDNS entries from prev master $orig_master_host($orig_master_ip) to new master $new_master_host($new_master_ip)..\n";
