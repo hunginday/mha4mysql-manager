@@ -12,6 +12,7 @@ use Socket;
 use Parallel::ForkManager;
 use Log::Minimal env_debug => 'MYDNS_DEBUG';
 
+use Data::Dumper;
 
 sub new {
     my $class = shift;
@@ -37,6 +38,8 @@ sub get_db_handle {
 
     my $timeout = $args{timeout} || 10;
     my %conf    = %ConfigMyDNS::CONF;
+
+    print "conf=".Dumper(%conf)."\n\n";
 
     my $dsn = sprintf("DBI:mysql:database=%s;host=%s;mysql_connect_timeout=%d;mysql_read_default_file=/etc/my.cnf;mysql_read_default_group=mysql;mysql_skip_secure_auth=1",
                       $conf->{db_name},
