@@ -64,11 +64,11 @@ sub _update_entry_iphost {
   my $orig_host = shift;
 
   my $sth = $dbh->prepare(<<'SQL');
-UPDATE rr SET data=?, host=? WHERE data=? AND host=? AND zone=?
+UPDATE rr SET data=?, host=? WHERE data=? AND host=? AND zone=1
 SQL
-  printf "Executing update: UPDATE rr SET data='%s', host='%s' WHERE data='%s' AND host='%s' AND zone='%s'\n",
-    $new_ip, $new_host, $orig_ip, $orig_host, $ZONE_ID;
-  my $affected_rows = $sth->execute($new_ip, $new_host, $orig_ip, $orig_host, $ZONE_ID);
+  printf "Executing update: UPDATE rr SET data='%s', name='%s' WHERE data='%s' AND name='%s' AND zone=1\n",
+    $new_ip, $new_host, $orig_ip, $orig_host;
+  my $affected_rows = $sth->execute($new_ip, $new_host, $orig_ip, $orig_host);
   _check_result($dbh, $affected_rows);
   print "Updated MyDNS entries successfully.\n";
 }
@@ -84,7 +84,7 @@ sub _master_takeover {
   print "Deleting existing new master's MyDNS entries $new_master_host($new_master_ip)..\n";
   _delete_entry_iphost($dbh, $new_master_ip, $new_master_host);
   print "Updating MyDNS entries from prev master $orig_master_host($orig_master_ip) to new master $new_master_host($new_master_ip)..\n";
-  _update_entry_iphost( $dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
+  _update_entry_iphost($dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
 
 }
 
