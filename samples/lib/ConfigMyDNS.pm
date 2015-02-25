@@ -1,4 +1,4 @@
-package Config;
+package ConfigMyDNS;
 
 use strict;
 use warnings;
