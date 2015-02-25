@@ -82,7 +82,7 @@ sub _update_entry_iphost {
   my $orig_host = shift;
 
   my $sth = $dbh->prepare(<<'SQL');
-UPDATE rr SET data=?, host=? WHERE data=? AND host=? AND zone=1
+UPDATE rr SET data=?, name=? WHERE data=? AND name=? AND zone=1
 SQL
   printf "Executing update: UPDATE rr SET data='%s', name='%s' WHERE data='%s' AND name='%s' AND zone=1\n",
     $new_ip, $new_host, $orig_ip, $orig_host;
