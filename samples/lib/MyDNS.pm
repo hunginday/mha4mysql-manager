@@ -42,8 +42,8 @@ sub get_db_handle {
     print "conf=".Dumper(%conf)."\n\n";
 
     my $dsn = sprintf("DBI:mysql:database=%s;host=%s;mysql_connect_timeout=%d;mysql_read_default_file=/etc/my.cnf;mysql_read_default_group=mysql;mysql_skip_secure_auth=1",
-                      $conf->{db_name},
-                      $conf->{db_host},
+                      $conf{db_name},
+                      $conf{db_host},
                       $timeout,
                      );
     debugf("dsn: %s", $dsn);
@@ -51,8 +51,8 @@ sub get_db_handle {
     my $autocommit = 1;
 
     my $dbh = DBI->connect($dsn,
-                           $conf->{db_user},
-                           $conf->{db_pwd},
+                           $conf{db_user},
+                           $conf{db_pwd},
                            {
                                AutoCommit           => $autocommit,
                                PrintError           => 0,
