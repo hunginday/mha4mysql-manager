@@ -36,7 +36,7 @@ sub get_db_handle {
     my %args = @_ == 1 ? %{ $_[0] } : @_;
 
     my $timeout = $args{timeout} || 10;
-    my $conf    = %ConfigMyDNS::CONF;
+    my %conf    = %ConfigMyDNS::CONF;
 
     my $dsn = sprintf("DBI:mysql:database=%s;host=%s;mysql_connect_timeout=%d;mysql_read_default_file=/etc/my.cnf;mysql_read_default_group=mysql;mysql_skip_secure_auth=1",
                       $conf->{db_name},
