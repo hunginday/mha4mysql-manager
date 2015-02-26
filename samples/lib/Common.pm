@@ -47,9 +47,9 @@ sub master_takeover_mydns {
 
 sub _get_name_prefix {
   my $name = shift;
-  if ($name =~ m{^(.+)-(a|b|c)$}) {
+  if ($name =~ m{^(.+)-(a|b|c)$}) { #match RoB servers
     return $1;
-  } elsif ($name =~ m{^([a-zA-Z\-]+)(\d+)$}) {
+  } elsif ($name =~ m{^([a-zA-Z\-]+)(\d+)$}) { #match test servers
     return $1;
   } else {
     return "";
@@ -139,6 +139,19 @@ SQL
   print "Updated MyDNS entries successfully.\n";
 }
 
+sub _get_remaining_records {
+  my $prefix_name = shift;
+  my $execute;
+
+  my $sth = $dbh->prepare(<<'SQL');
+SELECT * FROM rr WHERE name LIKE ? AND INET_ATON(data) IS NOT NULL
+SQL
+  printf "Select: SELECT * FROM rr WHERE name LIKE '%s' AND INET_ATON(data) IS NOT NULL\n",
+    "$prefix_name%";
+
+  return $execute;
+}
+
 sub _master_takeover {
   my $dbh              = shift;
   my $orig_master_ip   = shift;
@@ -166,8 +179,8 @@ sub _rob_master_takeover {
   print "Get remaining records..\n";
   my $prefix_name = _get_name_prefix($new_master_host);
   print "prefix_name = $prefix_name\n";
-  # $remaining_records = _get_remaining_records();
-  # print "Update remaining records..\n";
+  $remaining_records = _get_remaining_records();
+  print "Update remaining records..\n";
 
 
 }
