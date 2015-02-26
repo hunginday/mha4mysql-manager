@@ -6,6 +6,7 @@ use MHA::DBHelper;
 use Readonly;
 
 use MyDNS;
+use Data::Dumper;
 
 Readonly my $MYDNS => MyDNS->new();
 
@@ -150,7 +151,7 @@ SELECT * FROM rr WHERE name LIKE ? AND INET_ATON(data) IS NOT NULL
 SQL
   printf "Select: SELECT * FROM rr WHERE name LIKE '%s' AND INET_ATON(data) IS NOT NULL\n",
     "$prefix_name%";
-  $execute = $sth->execute("$prefix_name%");
+  $execute = $sth->selectall_hashref("$prefix_name%");
   return $execute;
 }
 
@@ -182,12 +183,7 @@ sub _rob_master_takeover {
   my $prefix_name = _get_name_prefix($new_master_host);
   print "prefix_name = $prefix_name\n";
   my $records = _get_remaining_records($dbh, $prefix_name);
-  while (my @results = $records->fetchrow()) {
-    print "row: sdcsdcsdc\n";
-  }
-
-  print "Update remaining records..\n";
-
+  print "dump: ".Dump($records)."\n";
 
 }
 
