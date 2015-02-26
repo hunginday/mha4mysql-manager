@@ -141,7 +141,7 @@ SQL
 }
 
 sub _get_remaining_records {
-  my $dbh       = shift;
+  my $dbh         = shift;
   my $prefix_name = shift;
 
   my $execute;
@@ -151,7 +151,7 @@ SELECT * FROM rr WHERE name LIKE ? AND INET_ATON(data) IS NOT NULL
 SQL
   printf "Select: SELECT * FROM rr WHERE name LIKE '%s' AND INET_ATON(data) IS NOT NULL\n",
     "$prefix_name%";
-  $execute = $sth->selectall_hashref("$prefix_name%");
+  $execute = $sth->execute("$prefix_name%");
   return $execute;
 }
 
