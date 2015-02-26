@@ -164,7 +164,7 @@ sub _rob_master_takeover {
   print "Updating MyDNS entries from new master $new_master_host($new_master_ip) to prev master $orig_master_host($orig_master_ip)..\n";
   _update_entry_old_master_temp($dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
   print "Get remaining records..\n";
-  $prefix_name = _get_name_prefix($new_host);
+  my $prefix_name = _get_name_prefix($new_master_host);
   print "prefix_name = $prefix_name\n";
   # $remaining_records = _get_remaining_records();
   # print "Update remaining records..\n";
