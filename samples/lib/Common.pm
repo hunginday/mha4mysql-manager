@@ -206,12 +206,14 @@ sub _rob_master_takeover {
 
   print "Get all host IPs..\n";
   my $host_list = _get_host_list($dbh, $prefix_name);
-  print "dump: ".Dumper(%$host_list)."\n";
 
+  print "Get remaining records..\n";
   my $records = _get_remaining_records($dbh, $prefix_name);
-  #print "dump: ".Dumper($records)."\n";
+
   foreach (@$records) {
-    print "data=".Dumper($_)."\n";
+    my $name = $_->[0];
+    my $data = $_->[1];
+    print ". data=".Dumper($_)."\n";
   }
 
 }
