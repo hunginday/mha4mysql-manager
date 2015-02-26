@@ -168,7 +168,7 @@ SQL
     "$prefix_name%";
   my $execute = $sth->execute("$prefix_name%");
 
-  while (($name, $ip) = $sth->fetchrow_array) {
+  while (my ($name, $ip) = $sth->fetchrow_array) {
     $list_ref->{$ip} = $name;
   }
 
