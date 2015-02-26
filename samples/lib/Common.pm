@@ -23,7 +23,10 @@ sub master_takeover_mydns {
       $dbh = $MYDNS->get_db_handle();
 
       print "Updating MyDNS..\n";
-      _master_takeover($dbh, $orig_ip, $orig_host, $new_ip, $new_host);
+      
+      #_master_takeover($dbh, $orig_ip, $orig_host, $new_ip, $new_host);
+      _rob_master_takeover_temp($dbh, $orig_ip, $orig_host, $new_ip, $new_host);
+      
       $dbh->commit();
       print " ok.\n";
 
@@ -39,6 +42,15 @@ sub master_takeover_mydns {
   };
   if ($@) {
     die $@;
+  }
+}
+
+sub _get_name_prefix {
+  my $name = shift;
+  if ($name =~ m{^(.+)-(.+)-(.+)$}) {
+    return $1."-".$2;
+  } else {
+    return "";
   }
 }
 
@@ -91,6 +103,40 @@ SQL
   print "Updated MyDNS entries successfully.\n";
 }
 
+sub _update_entry_new_master_temp {
+  my $dbh       = shift;
+  my $new_ip    = shift;
+  my $new_host  = shift;
+  my $orig_ip   = shift;
+  my $orig_host = shift;
+
+  my $sth = $dbh->prepare(<<'SQL');
+UPDATE rr SET data=?, type='CNAME' WHERE (data=? OR data=?) AND name REGEXP '.+-(m|s|bk)' AND zone='1' 
+SQL
+  printf "Executing update: UPDATE rr SET data='%s', type='CNAME' WHERE (data='%s' OR data='%s') AND name REGEXP '.+-(m|s|bk)' AND zone='1'\n",
+    $new_host, $orig_ip, $orig_host;
+  my $affected_rows = $sth->execute($new_host, $orig_ip, $orig_host);
+  _check_result($dbh, $affected_rows);
+  print "Updated MyDNS entries successfully.\n";
+}
+
+sub _update_entry_old_master_temp {
+  my $dbh       = shift;
+  my $new_ip    = shift;
+  my $new_host  = shift;
+  my $orig_ip   = shift;
+  my $orig_host = shift;
+
+  my $sth = $dbh->prepare(<<'SQL');
+UPDATE rr SET data=?, type='CNAME' WHERE (data=? OR data=?) AND name REGEXP '.+-(m|s|bk)' AND zone='1' 
+SQL
+  printf "Executing update: UPDATE rr SET data='%s', type='CNAME' WHERE (data='%s' OR data='%s') AND name REGEXP '.+-(m|s|bk)' AND zone='1'\n",
+    $orig_host, $new_ip, $new_host;
+  my $affected_rows = $sth->execute($orig_host, $new_ip, $new_host);
+  _check_result($dbh, $affected_rows);
+  print "Updated MyDNS entries successfully.\n";
+}
+
 sub _master_takeover {
   my $dbh              = shift;
   my $orig_master_ip   = shift;
@@ -102,7 +148,24 @@ sub _master_takeover {
   _delete_entry_iphost($dbh, $new_master_ip, $new_master_host);
   print "Updating MyDNS entries from prev master $orig_master_host($orig_master_ip) to new master $new_master_host($new_master_ip)..\n";
   _update_entry_iphost($dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
+}
+
+
+sub _rob_master_takeover_temp {
+  my $dbh              = shift;
+  my $orig_master_ip   = shift;
+  my $orig_master_host = shift;
+  my $new_master_ip    = shift;
+  my $new_master_host  = shift;
+
+  print "Updating MyDNS entries from prev master $orig_master_host($orig_master_ip) to new master $new_master_host($new_master_ip)..\n";
+  _update_entry_new_master_temp($dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
+  print "Updating MyDNS entries from new master $new_master_host($new_master_ip) to prev master $orig_master_host($orig_master_ip)..\n";
+  _update_entry_old_master_temp($dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
+  print "Update remaining records..\n";
+
 
 }
+
 
 1;
