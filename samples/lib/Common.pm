@@ -154,7 +154,7 @@ SQL
     "$prefix_name%";
   $execute = $sth->execute("$prefix_name%");
 
-  return $sth->fetchall_arrayref();
+  return $sth->fetchall_hashref();
 }
 
 sub _master_takeover {
