@@ -182,8 +182,11 @@ sub _rob_master_takeover {
   print "Get remaining records..\n";
   my $prefix_name = _get_name_prefix($new_master_host);
   print "prefix_name = $prefix_name\n";
-  my $records = _get_remaining_records($dbh, $prefix_name);
-  print "dump: ".Dumper($records)."\n";
+  my $sth = _get_remaining_records($dbh, $prefix_name);
+  #print "dump: ".Dumper($records)."\n";
+  while (@data = $sth->fetchrow_array()) {
+    print "data=".Dumper(@data)."\n";
+  }
 
 }
 
