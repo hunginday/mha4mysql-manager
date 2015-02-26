@@ -66,9 +66,9 @@ sub _delete_entry_iphost {
   my $host = shift;
 
   my $sth  = $dbh->prepare(<<'SQL');
-DELETE FROM rr WHERE name=? AND data=? AND zone=1
+DELETE FROM rr WHERE name=? AND data=? AND zone='1'
 SQL
-  printf "Executing delete: DELETE FROM rr WHERE name='%s' AND data='%s' AND zone=1\n", $host, $ip;
+  printf "Executing delete: DELETE FROM rr WHERE name='%s' AND data='%s' AND zone='1'\n", $host, $ip;
   my $affected_rows = $sth->execute($host, $ip);
   _check_result($dbh, $affected_rows);
   print "Deleted MyDNS entries successfully.\n";
@@ -82,9 +82,9 @@ sub _update_entry_iphost {
   my $orig_host = shift;
 
   my $sth = $dbh->prepare(<<'SQL');
-UPDATE rr SET data=?, name=? WHERE data=? AND name=? AND zone=1
+UPDATE rr SET data=?, name=? WHERE data=? AND name=? AND zone='1'
 SQL
-  printf "Executing update: UPDATE rr SET data='%s', name='%s' WHERE data='%s' AND name='%s' AND zone=1\n",
+  printf "Executing update: UPDATE rr SET data='%s', name='%s' WHERE data='%s' AND name='%s' AND zone='1'\n",
     $new_ip, $new_host, $orig_ip, $orig_host;
   my $affected_rows = $sth->execute($new_ip, $new_host, $orig_ip, $orig_host);
   _check_result($dbh, $affected_rows);
