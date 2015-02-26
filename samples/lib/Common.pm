@@ -152,7 +152,7 @@ SQL
   printf "Select: SELECT * FROM rr WHERE name LIKE '%s' AND name REGEXP '.+-(m|s|bk)' AND INET_ATON(data) IS NOT NULL\n",
     "$prefix_name%";
   $execute = $sth->execute("$prefix_name%");
-  return $execute;
+  return $sth;
 }
 
 sub _master_takeover {
