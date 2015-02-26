@@ -185,7 +185,7 @@ sub _rob_master_takeover {
   while (my @results = $records->fetchrow()) {
     print "row: sdcsdcsdc\n";
   }
-}
+
   print "Update remaining records..\n";
 
 
