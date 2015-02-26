@@ -48,6 +48,7 @@ sub master_takeover_mydns {
 
 sub _get_name_prefix {
   my $name = shift;
+
   if ($name =~ m{^(.+)-(a|b|c)$}) { #match RoB servers
     return $1;
   } elsif ($name =~ m{^([a-zA-Z\-]+)(\d+)$}) { #match test servers
@@ -152,7 +153,8 @@ SQL
   printf "Select: SELECT * FROM rr WHERE name LIKE '%s' AND name REGEXP '.+-(m|s|bk)' AND INET_ATON(data) IS NOT NULL\n",
     "$prefix_name%";
   $execute = $sth->execute("$prefix_name%");
-  return $sth;
+
+  return $sth->fetchall_arrayref();
 }
 
 sub _master_takeover {
@@ -179,13 +181,14 @@ sub _rob_master_takeover {
   _update_entry_new_master_temp($dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
   print "Updating MyDNS entries from new master $new_master_host($new_master_ip) to prev master $orig_master_host($orig_master_ip)..\n";
   _update_entry_old_master_temp($dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
+
   print "Get remaining records..\n";
   my $prefix_name = _get_name_prefix($new_master_host);
   print "prefix_name = $prefix_name\n";
-  my $sth = _get_remaining_records($dbh, $prefix_name);
+  my $records = _get_remaining_records($dbh, $prefix_name);
   #print "dump: ".Dumper($records)."\n";
-  while (my @data = $sth->fetchrow_array()) {
-    print "data=".Dumper(@data)."\n";
+  foreach (@$records) {
+    print "data=".Dumper($_)."\n";
   }
 
 }
