@@ -117,7 +117,7 @@ sub _update_entry_new_master_temp {
   my $sth = $dbh->prepare(<<'SQL');
 UPDATE rr SET data=?, type='CNAME' WHERE (data=? OR data=?) AND name REGEXP '.+-(m)' AND zone='1' 
 SQL
-  printf "Executing update: UPDATE rr SET data='%s', type='CNAME' WHERE (data='%s' OR data='%s') AND name REGEXP '.+-(m|s|bk)' AND zone='1'\n",
+  printf "Executing update: UPDATE rr SET data='%s', type='CNAME' WHERE (data='%s' OR data='%s') AND name REGEXP '.+-(m)' AND zone='1'\n",
     $new_host, $orig_ip, $orig_host;
   my $affected_rows = $sth->execute($new_host, $orig_ip, $orig_host);
   _check_result($dbh, $affected_rows);
@@ -134,7 +134,7 @@ sub _update_entry_old_master_temp {
   my $sth = $dbh->prepare(<<'SQL');
 UPDATE rr SET data=?, type='CNAME' WHERE (data=? OR data=?) AND name REGEXP '.+-(s|bk)' AND zone='1' 
 SQL
-  printf "Executing update: UPDATE rr SET data='%s', type='CNAME' WHERE (data='%s' OR data='%s') AND name REGEXP '.+-(m|s|bk)' AND zone='1'\n",
+  printf "Executing update: UPDATE rr SET data='%s', type='CNAME' WHERE (data='%s' OR data='%s') AND name REGEXP '.+-(s|bk)' AND zone='1'\n",
     $orig_host, $new_ip, $new_host;
   my $affected_rows = $sth->execute($orig_host, $new_ip, $new_host);
   _check_result($dbh, $affected_rows);
@@ -173,6 +173,22 @@ SQL
   }
 
   return $host_list;
+}
+
+sub _replace_ip_by_host {
+  my $dbh      = shift;
+  my $name     = shift;
+  my $ip       = shift;
+  my $new_host = shift;
+
+  my $sth = $dbh->prepare(<<'SQL');
+UPDATE rr SET data=?, type='CNAME' WHERE name=? AND data=? AND name REGEXP '.+-(m|s|bk)' AND zone='1' 
+SQL
+  printf "Executing update: UPDATE rr SET data='%s', type='CNAME' WHERE name='%s' AND data='%s' AND name REGEXP '.+-(m|s|bk)' AND zone='1'\n",
+    $new_host, $name, $ip;
+  my $affected_rows = $sth->execute($new_host, $name, $ip);
+  _check_result($dbh, $affected_rows);
+  print "Updated MyDNS entries successfully.\n";
 }
 
 sub _master_takeover {
@@ -215,7 +231,8 @@ sub _rob_master_takeover {
     my $name = $_->[0];
     my $ip   = $_->[1];
     if (exists $host_list->{$ip}) {
-      print ". Update now..\n";
+      print ". Relace IP (A) by hostname (CNAME)..\n";
+      _replace_ip_by_host($dbh, $name, $ip, $host_list->{$ip});
     }
   }
 
