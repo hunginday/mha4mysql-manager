@@ -145,16 +145,34 @@ sub _get_remaining_records {
   my $dbh         = shift;
   my $prefix_name = shift;
 
-  my $execute;
+  my $sth = $dbh->prepare(<<'SQL');
+SELECT name, data FROM rr WHERE name LIKE ? AND name REGEXP '.+-(m|s|bk)' AND INET_ATON(data) IS NOT NULL AND type='A'
+SQL
+  printf "Select: SELECT name, data FROM rr WHERE name LIKE '%s' AND name REGEXP '.+-(m|s|bk)' AND INET_ATON(data) IS NOT NULL AND type='A'\n",
+    "$prefix_name%";
+  my $execute = $sth->execute("$prefix_name%");
+
+  return $sth->fetchall_arrayref();
+}
+
+sub _get_host_list {
+  my $dbh         = shift;
+  my $prefix_name = shift;
+
+  my $list_ref;
 
   my $sth = $dbh->prepare(<<'SQL');
-SELECT * FROM rr WHERE name LIKE ? AND name REGEXP '.+-(m|s|bk)' AND INET_ATON(data) IS NOT NULL
+SELECT name, data FROM rr WHERE name LIKE ? AND NOT ( name REGEXP '.+-(m|s|bk)' ) AND INET_ATON(data) IS NOT NULL AND type='A'
 SQL
-  printf "Select: SELECT * FROM rr WHERE name LIKE '%s' AND name REGEXP '.+-(m|s|bk)' AND INET_ATON(data) IS NOT NULL\n",
+  printf "Select: SELECT name, data FROM rr WHERE name LIKE '%s' AND NOT ( name REGEXP '.+-(m|s|bk)' ) AND INET_ATON(data) IS NOT NULL AND type='A'\n",
     "$prefix_name%";
-  $execute = $sth->execute("$prefix_name%");
+  my $execute = $sth->execute("$prefix_name%");
 
-  return $sth->fetchall_hashref();
+  while (($name, $ip) = $sth->fetchrow_array) {
+    $list_ref->{$ip} = $name;
+  }
+
+  return $list_ref;
 }
 
 sub _master_takeover {
@@ -185,11 +203,16 @@ sub _rob_master_takeover {
   print "Get remaining records..\n";
   my $prefix_name = _get_name_prefix($new_master_host);
   print "prefix_name = $prefix_name\n";
+
+  print "Get all host IPs..\n";
+  my $host_list = _get_host_list($dbh, $prefix_name);
+
+
   my $records = _get_remaining_records($dbh, $prefix_name);
-  print "dump: ".Dumper(%$records)."\n";
-  #foreach (@$records) {
-  #  print "data=".Dumper($_)."\n";
-  #}
+  #print "dump: ".Dumper($records)."\n";
+  foreach (@$records) {
+    print "data=".Dumper($_)."\n";
+  }
 
 }
 
