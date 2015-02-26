@@ -181,7 +181,7 @@ sub _rob_master_takeover {
   print "Get remaining records..\n";
   my $prefix_name = _get_name_prefix($new_master_host);
   print "prefix_name = $prefix_name\n";
-  $remaining_records = _get_remaining_records($dbh, $prefix_name);
+  my $remaining_records = _get_remaining_records($dbh, $prefix_name);
   print "Update remaining records..\n";
 
 
