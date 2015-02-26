@@ -25,7 +25,7 @@ sub master_takeover_mydns {
       print "Updating MyDNS..\n";
 
       #_master_takeover($dbh, $orig_ip, $orig_host, $new_ip, $new_host);
-      _rob_master_takeover_temp($dbh, $orig_ip, $orig_host, $new_ip, $new_host);
+      _rob_master_takeover($dbh, $orig_ip, $orig_host, $new_ip, $new_host);
       
       $dbh->commit();
       print " ok.\n";
@@ -48,6 +48,8 @@ sub master_takeover_mydns {
 sub _get_name_prefix {
   my $name = shift;
   if ($name =~ m{^(.+)-(a|b|c)$}) {
+    return $1;
+  } elsif ($name =~ m{^(.+)(\d+)$}) {
     return $1;
   } else {
     return "";
@@ -150,21 +152,22 @@ sub _master_takeover {
   _update_entry_iphost($dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
 }
 
-sub _rob_master_takeover_temp {
+sub _rob_master_takeover {
   my $dbh              = shift;
   my $orig_master_ip   = shift;
   my $orig_master_host = shift;
   my $new_master_ip    = shift;
   my $new_master_host  = shift;
 
-  print "Get name prefix..\n";
-  my $name_prefix = _get_name_prefix($new_master_host);
-  print "prefix=".$name_prefix."\n";
   print "Updating MyDNS entries from prev master $orig_master_host($orig_master_ip) to new master $new_master_host($new_master_ip)..\n";
   _update_entry_new_master_temp($dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
   print "Updating MyDNS entries from new master $new_master_host($new_master_ip) to prev master $orig_master_host($orig_master_ip)..\n";
   _update_entry_old_master_temp($dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
-  print "Update remaining records..\n";
+  print "Get remaining records..\n";
+  $prefix_name = _get_name_prefix($new_host);
+  print "prefix_name = $prefix_name\n";
+  # $remaining_records = _get_remaining_records();
+  # print "Update remaining records..\n";
 
 
 }
