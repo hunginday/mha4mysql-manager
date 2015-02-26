@@ -147,9 +147,9 @@ sub _get_remaining_records {
   my $execute;
 
   my $sth = $dbh->prepare(<<'SQL');
-SELECT * FROM rr WHERE name LIKE ? AND INET_ATON(data) IS NOT NULL
+SELECT * FROM rr WHERE name LIKE ? AND name REGEXP '.+-(m|s|bk)' AND INET_ATON(data) IS NOT NULL
 SQL
-  printf "Select: SELECT * FROM rr WHERE name LIKE '%s' AND INET_ATON(data) IS NOT NULL\n",
+  printf "Select: SELECT * FROM rr WHERE name LIKE '%s' AND name REGEXP '.+-(m|s|bk)' AND INET_ATON(data) IS NOT NULL\n",
     "$prefix_name%";
   $execute = $sth->execute("$prefix_name%");
   return $execute;
@@ -183,7 +183,7 @@ sub _rob_master_takeover {
   my $prefix_name = _get_name_prefix($new_master_host);
   print "prefix_name = $prefix_name\n";
   my $records = _get_remaining_records($dbh, $prefix_name);
-  print "dump: ".Dump($records)."\n";
+  print "dump: ".Dumper($records)."\n";
 
 }
 
