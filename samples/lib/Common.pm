@@ -231,8 +231,9 @@ sub _rob_master_takeover {
     my $name = $_->[0];
     my $ip   = $_->[1];
     if (exists $host_list->{$ip}) {
-      print ". Relace IP (A) by hostname (CNAME)..\n";
-      _replace_ip_by_host($dbh, $name, $ip, $host_list->{$ip});
+      my $new_host = $host_list->{$ip};
+      print ". Relace IP (A): $ip by hostname (CNAME): $new_host..\n";
+      _replace_ip_by_host($dbh, $name, $ip, $new_host);
     }
   }
 
