@@ -158,7 +158,7 @@ sub _rob_master_takeover_temp {
   my $new_master_host  = shift;
 
   print "Get name prefix..\n";
-  $name_prefix = $_get_name_prefix($new_master_host);
+  my $name_prefix = _get_name_prefix($new_master_host);
   print "prefix=".$name_prefix."\n";
   print "Updating MyDNS entries from prev master $orig_master_host($orig_master_ip) to new master $new_master_host($new_master_ip)..\n";
   _update_entry_new_master_temp($dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
