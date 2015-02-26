@@ -186,10 +186,10 @@ sub _rob_master_takeover {
   my $prefix_name = _get_name_prefix($new_master_host);
   print "prefix_name = $prefix_name\n";
   my $records = _get_remaining_records($dbh, $prefix_name);
-  #print "dump: ".Dumper($records)."\n";
-  foreach (@$records) {
-    print "data=".Dumper($_)."\n";
-  }
+  print "dump: ".Dumper(%$records)."\n";
+  #foreach (@$records) {
+  #  print "data=".Dumper($_)."\n";
+  #}
 
 }
 
