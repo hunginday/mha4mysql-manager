@@ -23,7 +23,7 @@ sub master_takeover_mydns {
       $dbh = $MYDNS->get_db_handle();
 
       print "Updating MyDNS..\n";
-      
+
       #_master_takeover($dbh, $orig_ip, $orig_host, $new_ip, $new_host);
       _rob_master_takeover_temp($dbh, $orig_ip, $orig_host, $new_ip, $new_host);
       
@@ -128,7 +128,7 @@ sub _update_entry_old_master_temp {
   my $orig_host = shift;
 
   my $sth = $dbh->prepare(<<'SQL');
-UPDATE rr SET data=?, type='CNAME' WHERE (data=? OR data=?) AND name REGEXP '.+-(m|s|bk)' AND zone='1' 
+UPDATE rr SET data=?, type='CNAME' WHERE (data=? OR data=?) AND name REGEXP '.+-(s|bk)' AND zone='1' 
 SQL
   printf "Executing update: UPDATE rr SET data='%s', type='CNAME' WHERE (data='%s' OR data='%s') AND name REGEXP '.+-(m|s|bk)' AND zone='1'\n",
     $orig_host, $new_ip, $new_host;
