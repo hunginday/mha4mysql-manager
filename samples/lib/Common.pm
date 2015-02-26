@@ -49,7 +49,7 @@ sub _get_name_prefix {
   my $name = shift;
   if ($name =~ m{^(.+)-(a|b|c)$}) {
     return $1;
-  } elsif ($name =~ m{^([\w\-]+)(\d+)$}) {
+  } elsif ($name =~ m{^([a-zA-Z\-]+)(\d+)$}) {
     return $1;
   } else {
     return "";
