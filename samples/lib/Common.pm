@@ -111,7 +111,7 @@ sub _update_entry_new_master_temp {
   my $orig_host = shift;
 
   my $sth = $dbh->prepare(<<'SQL');
-UPDATE rr SET data=?, type='CNAME' WHERE (data=? OR data=?) AND name REGEXP '.+-(m|s|bk)' AND zone='1' 
+UPDATE rr SET data=?, type='CNAME' WHERE (data=? OR data=?) AND name REGEXP '.+-(m)' AND zone='1' 
 SQL
   printf "Executing update: UPDATE rr SET data='%s', type='CNAME' WHERE (data='%s' OR data='%s') AND name REGEXP '.+-(m|s|bk)' AND zone='1'\n",
     $new_host, $orig_ip, $orig_host;
