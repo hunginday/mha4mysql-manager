@@ -184,7 +184,7 @@ sub _rob_master_takeover {
   print "prefix_name = $prefix_name\n";
   my $sth = _get_remaining_records($dbh, $prefix_name);
   #print "dump: ".Dumper($records)."\n";
-  while (@data = $sth->fetchrow_array()) {
+  while (my @data = $sth->fetchrow_array()) {
     print "data=".Dumper(@data)."\n";
   }
 
