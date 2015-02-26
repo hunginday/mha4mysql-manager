@@ -159,20 +159,20 @@ sub _get_host_list {
   my $dbh         = shift;
   my $prefix_name = shift;
 
-  my $list_ref;
+  my $host_list;
 
   my $sth = $dbh->prepare(<<'SQL');
-SELECT name, data FROM rr WHERE name LIKE ? AND NOT ( name REGEXP '.+-(m|s|bk)' ) AND INET_ATON(data) IS NOT NULL AND type='A'
+SELECT name, data FROM rr WHERE name LIKE ? AND NOT( name REGEXP '.+-(m|s|bk)' ) AND INET_ATON(data) IS NOT NULL AND type='A'
 SQL
-  printf "Select: SELECT name, data FROM rr WHERE name LIKE '%s' AND NOT ( name REGEXP '.+-(m|s|bk)' ) AND INET_ATON(data) IS NOT NULL AND type='A'\n",
+  printf "Select: SELECT name, data FROM rr WHERE name LIKE '%s' AND NOT( name REGEXP '.+-(m|s|bk)' ) AND INET_ATON(data) IS NOT NULL AND type='A'\n",
     "$prefix_name%";
   my $execute = $sth->execute("$prefix_name%");
 
   while (my ($name, $ip) = $sth->fetchrow_array) {
-    $list_ref->{$ip} = $name;
+    $host_list->{$ip} = $name;
   }
 
-  return $list_ref;
+  return $host_list;
 }
 
 sub _master_takeover {
@@ -206,7 +206,7 @@ sub _rob_master_takeover {
 
   print "Get all host IPs..\n";
   my $host_list = _get_host_list($dbh, $prefix_name);
-
+  print "dump: ".Dumper(%$host_list)."\n";
 
   my $records = _get_remaining_records($dbh, $prefix_name);
   #print "dump: ".Dumper($records)."\n";
