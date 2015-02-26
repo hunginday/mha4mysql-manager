@@ -227,7 +227,6 @@ sub _rob_master_takeover {
   my $records = _get_remaining_records($dbh, $prefix_name);
 
   foreach (@$records) {
-    # print ". data=".Dumper($_)."\n";
     my $name = $_->[0];
     my $ip   = $_->[1];
     if (exists $host_list->{$ip}) {
