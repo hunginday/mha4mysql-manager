@@ -211,9 +211,12 @@ sub _rob_master_takeover {
   my $records = _get_remaining_records($dbh, $prefix_name);
 
   foreach (@$records) {
+    # print ". data=".Dumper($_)."\n";
     my $name = $_->[0];
-    my $data = $_->[1];
-    print ". data=".Dumper($_)."\n";
+    my $ip   = $_->[1];
+    if (exists $host_list->{$ip}) {
+      print ". Update now..\n";
+    }
   }
 
 }
