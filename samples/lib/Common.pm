@@ -32,7 +32,6 @@ sub master_takeover_mydns {
       print " ok.\n";
 
       $dbh->disconnect();
-
     }
     elsif ($command eq "stop") {
       # do nothing
