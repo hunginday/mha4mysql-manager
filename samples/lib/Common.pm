@@ -159,7 +159,7 @@ sub _get_host_list {
   my $dbh         = shift;
   my $prefix_name = shift;
 
-  my $host_list;
+  my $host_list = {};
 
   my $sth = $dbh->prepare(<<'SQL');
 SELECT name, data FROM rr WHERE name LIKE ? AND NOT( name REGEXP '.+-(m|s|bk)' ) AND INET_ATON(data) IS NOT NULL AND type='A'
