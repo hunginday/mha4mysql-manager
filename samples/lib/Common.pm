@@ -107,7 +107,7 @@ SQL
   print "Updated MyDNS entries successfully.\n";
 }
 
-sub _update_entry_new_master_temp {
+sub _update_entry_new_master {
   my $dbh       = shift;
   my $new_ip    = shift;
   my $new_host  = shift;
@@ -124,7 +124,7 @@ SQL
   print "Updated MyDNS entries successfully.\n";
 }
 
-sub _update_entry_old_master_temp {
+sub _update_entry_old_master {
   my $dbh       = shift;
   my $new_ip    = shift;
   my $new_host  = shift;
@@ -212,9 +212,9 @@ sub _rob_master_takeover {
   my $new_master_host  = shift;
 
   print "Updating MyDNS entries from prev master $orig_master_host($orig_master_ip) to new master $new_master_host($new_master_ip)..\n";
-  _update_entry_new_master_temp($dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
+  _update_entry_new_master($dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
   print "Updating MyDNS entries from new master $new_master_host($new_master_ip) to prev master $orig_master_host($orig_master_ip)..\n";
-  _update_entry_old_master_temp($dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
+  _update_entry_old_master($dbh, $new_master_ip, $new_master_host, $orig_master_ip, $orig_master_host);
 
   print "Get prefix..\n";
   my $prefix_name = _get_name_prefix($new_master_host);
